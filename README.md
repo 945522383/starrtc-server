@@ -1,6 +1,6 @@
 # 服务端程序免费私有部署
 
-以下服务端均完全免费(采用C语言开发)，无鉴权，可用于局域网内部署，现已开放:
+以下服务端均完全免费(采用C语言开发)，无鉴权，可用于腾讯云，阿里云或局域网内部署，现已开放:
 
 
 | 服务端        | 功能           | 备注  |
@@ -10,9 +10,10 @@
 | chatDBServer  | 离线消息存储      				  |     |
 | groupServer   | 群聊      					      | 如果只需要单聊，不需要群聊的话，不用启动    |
 | chatRoomServer| 多人聊天室      					  |     |
-| liveSrcServer | 多人视频会议，RTMP推流      		  |     |
-| liveVdnServer | 互动连麦直播     				      |     |
+| liveSrcServer | 多人视频会议  RTMP推流      		  |     |
+| liveVdnServer | 互动连麦直播，vdn分发网络		      |     |
 | liveProxyServer | RTSP 拉流服务端     				      |     |
+| videoRecServer | 录制录像功能     				      |     |
 
 
 web目录里面是支持web私有部署的服务端程序与自签名证书。根目录里面的服务端程序不支持web端私有部署。
@@ -36,8 +37,6 @@ voip服务端部署
 nohup ./voipServer > voipServer.log 2>&1 &
 
 ```
-需要开放端口：10086 udp
-
 注：也需要部署msgServer,用于传输呼叫，接听等消息。
 
 IM服务端部署
@@ -55,9 +54,6 @@ nohup ./msgServer     > msgServer.log 2>&1 &
 nohup ./chatDBServer  > chatDBServer.log 2>&1 &
 nohup ./groupServer   > groupServer.log 2>&1 &
 ```
-需要开放端口：
-
-msgServer 		19903 tcp
 
 chatRoom服务端部署
 ==
@@ -65,8 +61,6 @@ chatRoom服务端部署
 后台启动：
 nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 ```
-需要开放端口：19906 tcp
-
 
 liveSrc服务端部署
 ==
@@ -74,16 +68,24 @@ liveSrc服务端部署
 后台启动：
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
-需要开放端口：19931 udp
-
 
 liveVdn服务端部署
 ==
+互动直播，观众不限人数
 ```java  
 后台启动：
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
-需要开放端口：19928 udp
+
+
+录制服务端部署
+==
+目前用于liveSrcServer和voipServer的视频录像功能，视频以flv的格式保存到RECFOLDER目录，文件名格式为：用户名_日期_时_分_秒，如userId_20190529_15_08_02.flv
+
+```java  
+后台启动：
+nohup ./videoRecServer > videoRecServer.log 2>&1 &
+```
 
 rtsp拉流服务端部署
 ==
@@ -93,7 +95,6 @@ rtsp拉流服务端部署
 后台启动：
 nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
 ```
-需要开放端口：19932 tcp
 
 使用方法：
 
@@ -115,8 +116,16 @@ http://www.xxx.com:19932/close?channelId=xxxx
 
 http://www.xxx.com:19932/delete?channelId=xxxx
 
-
-
+需要开放端口
+====
+| 服务端        | 端口           | 
+| ------------- |:-------------  |
+| msgServer     | 19903(tcp)  29991(https信任测试 tcp)      |    
+| voipServer    | 10086 udp 10087(websocket tcp) 10088(webrtc udp) 44446(P2P通讯 udp)  29992(https信任测试 tcp) | 
+| chatRoomServer| 19906 tcp    29993(https信任测试 tcp)  					  |     
+| liveSrcServer | 19931 udp  19934(websocket tcp) 19935(webrtc udp) 29994(https信任测试 tcp)   		  |     
+| liveVdnServer | 19928 udp    	19940(websocket tcp) 19941(webrtc udp) 29995(https信任测试 tcp)			      |    
+| liveProxyServer |19932 tcp  			  |   
 
 
 测试方法
